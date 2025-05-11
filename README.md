@@ -1,180 +1,85 @@
-# Projeto Agente de Táxi Inteligente com Q-Learning
+# Projeto Agente de Táxi Inteligente com Q-Learning (Simplificado)
 
-## Autor
-- Nome: Victor Fernando de Sena Linhares
-- Matrícula: 01645000
-- Data de Criação do Projeto Base: 02/05/2025
-- Data de Desenvolvimento Atualização: 11/05/2025
-- IAs usadas: DeepSeek e Manus
+Este projeto apresenta uma implementação simplificada do algoritmo Q-Learning para resolver o problema clássico do "Táxi" (ambiente Taxi-v3 do Gymnasium/OpenAI Gym). O objetivo principal é ser didático e facilitar a compreensão dos conceitos fundamentais do Aprendizado por Reforço.
 
-## 1. Introdução ao Projeto
+## Sobre o Desafio do Táxi
 
-Este projeto visa desenvolver um agente inteligente capaz de resolver o problema do "Táxi Virtual" (ambiente Taxi-v3 do OpenAI Gym) utilizando Aprendizado por Reforço, especificamente o algoritmo Q-Learning. O objetivo principal é treinar o agente para que ele aprenda a política ótima de navegação em um ambiente de grade 5x5, de forma a pegar um passageiro em um local específico e levá-lo ao seu destino da maneira mais eficiente possível, maximizando a recompensa acumulada e minimizando penalidades por ações incorretas.
+No ambiente Taxi-v3, um agente (o táxi) opera em uma grade 5x5. Existem quatro locais de coleta e entrega de passageiros designados (R, G, Y, B). O objetivo do táxi é:
+1.  Navegar até a localização de um passageiro.
+2.  Pegar o passageiro.
+3.  Navegar até o destino desejado pelo passageiro.
+4.  Largar o passageiro no local correto.
 
-O ambiente Taxi-v3 simula um táxi que opera em uma cidade representada por uma grade. Existem quatro locais de coleta e destino de passageiros (R, G, Y, B). O agente precisa aprender a:
-- Navegar pela grade (ações: Norte, Sul, Leste, Oeste).
-- Pegar um passageiro no local correto (ação: Pegar).
-- Levar o passageiro ao destino correto (ação: Largar).
+O agente recebe recompensas ou penalidades com base em suas ações, incentivando-o a completar a tarefa da forma mais eficiente possível.
 
-O agente recebe recompensas positivas por completar a tarefa com sucesso e penalidades por ações ineficientes ou incorretas (como tentar pegar um passageiro onde não há um, ou largar em local errado).
+## O que é Q-Learning?
 
-## 2. Tecnologias e Bibliotecas Utilizadas
+Q-Learning é um algoritmo de Aprendizado por Reforço que não requer um modelo do ambiente (model-free). Ele aprende uma política ótima, ou seja, qual a melhor ação a ser tomada em cada estado, através da construção de uma **Q-Table** (Tabela de Valores Q).
 
-- **Python 3.11**: Linguagem de programação principal para a implementação do agente.
-- **OpenAI Gymnasium (anteriormente Gym)**: Biblioteca utilizada para fornecer o ambiente de simulação do Táxi (Taxi-v3). Ela oferece a interface padrão para ambientes de aprendizado por reforço.
-- **NumPy**: Biblioteca fundamental para computação científica em Python, utilizada para a criação e manipulação da Q-table e outros cálculos numéricos.
-- **Matplotlib**: Biblioteca para a criação de gráficos estáticos, utilizada para visualizar as métricas de treinamento e avaliação do agente, como a evolução da recompensa média por episódio e o decaimento da taxa de exploração.
+*   **Estados (States):** Representam as diferentes situações em que o agente pode se encontrar (posição do táxi, localização do passageiro, destino).
+*   **Ações (Actions):** As possíveis movimentações ou operações que o agente pode realizar (mover Norte, Sul, Leste, Oeste, Pegar, Largar).
+*   **Recompensas (Rewards):** Feedback numérico que o agente recebe após cada ação. Positivo para ações boas, negativo para ações ruins.
+*   **Q-Table:** Uma tabela onde as linhas são os estados e as colunas são as ações. Cada célula `Q(s, a)` armazena o valor esperado da recompensa total futura ao tomar a ação `a` no estado `s` e seguir a política ótima thereafter.
 
-## 3. Algoritmos Aplicados e Conceitos de Machine Learning
+O agente aprende atualizando os valores da Q-Table usando a equação de Bellman, com base na experiência adquirida (tentativa e erro).
 
-### 3.1. Q-Learning
-O Q-Learning é um algoritmo de aprendizado por reforço model-free (não requer um modelo do ambiente) e off-policy (aprende a política ótima independentemente da política que está seguindo durante o treinamento). Ele busca aprender uma função de valor ação, Q(s, a), que estima a recompensa total esperada ao executar a ação 'a' no estado 's' e seguir a política ótima a partir daí.
+## Tecnologias Utilizadas
 
-**Fórmula de Atualização da Q-Table:**
-A Q-table é uma tabela onde as linhas representam os estados (s) e as colunas representam as ações (a). Cada célula Q(s, a) armazena o valor Q para aquele par estado-ação. A atualização é feita iterativamente usando a equação de Bellman:
+*   **Python:** Linguagem de programação principal.
+*   **Gymnasium (anteriormente OpenAI Gym):** Para o ambiente Taxi-v3 e interações de aprendizado por reforço.
+*   **NumPy:** Para manipulação eficiente da Q-Table e cálculos numéricos.
+*   **Matplotlib:** Para visualização do progresso do aprendizado (gráfico de recompensas).
 
-`Q(s, a) ← Q(s, a) + α * [R + γ * max(Q(s', a')) - Q(s, a)]`
+## Estrutura do Projeto
 
-Onde:
-- `s`: estado atual.
-- `a`: ação tomada no estado `s`.
-- `s'`: próximo estado após tomar a ação `a`.
-- `R`: recompensa recebida ao transitar de `s` para `s'`.
-- `α (alpha)`: Taxa de Aprendizado (Learning Rate). Controla o quanto os novos valores Q substituem os antigos. Um valor entre 0 e 1.
-- `γ (gamma)`: Fator de Desconto. Determina a importância das recompensas futuras. Um valor entre 0 e 1. Um valor próximo de 1 dá mais peso a recompensas futuras.
-- `max(Q(s', a'))`: O valor Q máximo estimado para todas as ações possíveis no próximo estado `s'`.
+*   `q_learning_taxi_limpo.py`: O script Python principal contendo a implementação do agente Q-Learning, treinamento e demonstração.
+*   `q_learning_taxi_anotacoes_estudo.md`: Um documento com comentários detalhados sobre o código original (antes da simplificação para apresentação), útil para estudo aprofundado.
+*   `explanation.md`: Um arquivo com explicações teóricas sobre Q-Learning, o sistema de recompensas, parâmetros e um roteiro para apresentação do projeto.
+*   `recompensa_treinamento_limpo.png`: Imagem do gráfico gerado pelo script, mostrando a evolução da recompensa média durante o treinamento.
 
-### 3.2. Exploração vs. Explotação (Epsilon-Greedy)
-Para garantir que o agente explore suficientemente o ambiente e não fique preso em uma política subótima, utilizamos a estratégia epsilon-greedy:
-- Com uma probabilidade `ε (epsilon)`, o agente escolhe uma ação aleatória (exploração).
-- Com uma probabilidade `1-ε`, o agente escolhe a melhor ação conhecida com base nos valores Q atuais (explotação).
+## Como Executar o Projeto
 
-**Ajuste da Taxa de Exploração (Decaimento de Epsilon):**
-Inicialmente, `ε` é alto para incentivar a exploração. Conforme o agente aprende, `ε` é gradualmente reduzido (decaimento exponencial) para que o agente passe a explotar mais o conhecimento adquirido. A fórmula de decaimento utilizada foi:
+1.  **Pré-requisitos:**
+    *   Python 3.x instalado.
+    *   As seguintes bibliotecas Python: `gymnasium`, `numpy`, `matplotlib`.
+    Você pode instalá-las usando pip:
+    ```bash
+    pip install gymnasium numpy matplotlib
+    ```
+    Se você estiver usando uma versão mais antiga do Gym, pode precisar instalar `gymnasium[toy_text]` ou `gym` e ajustar a importação no código.
 
-`ε = min_ε + (max_ε - min_ε) * exp(-decay_rate * episódio)`
+2.  **Executar o Script:**
+    Navegue até o diretório onde você salvou o arquivo `q_learning_taxi_limpo.py` e execute-o no terminal:
+    ```bash
+    python q_learning_taxi_limpo.py
+    ```
 
-Onde:
-- `min_ε`: Valor mínimo de epsilon.
-- `max_ε`: Valor máximo (inicial) de epsilon.
-- `decay_rate`: Taxa de decaimento.
+3.  **O que esperar:**
+    *   O script imprimirá informações sobre o ambiente (número de estados e ações).
+    *   Iniciará o processo de treinamento, mostrando o progresso a cada X episódios e o valor atual do Epsilon (taxa de exploração).
+    *   Ao final do treinamento, salvará um gráfico chamado `recompensa_treinamento_limpo.png` no mesmo diretório, mostrando a evolução da recompensa média.
+    *   Em seguida, iniciará uma fase de demonstração, onde você poderá ver o agente treinado em ação por alguns episódios. O estado do ambiente será impresso, e você precisará pressionar Enter para ver cada passo do agente.
 
-### 3.3. Recompensa e Penalidade
-O ambiente Taxi-v3 define o sistema de recompensas:
-- +20 por largar o passageiro no destino correto.
-- -1 por cada passo dado (para incentivar a eficiência).
-- -10 por tentar pegar um passageiro ilegalmente ou largar o passageiro em local errado.
+## Entendendo os Parâmetros do Q-Learning no Script
 
-O agente aprende a maximizar a recompensa acumulada ao longo de um episódio.
+*   `alpha` (Taxa de Aprendizado): Controla o quão rápido o agente atualiza seus valores Q com base em novas experiências. (Valor no script: 0.1)
+*   `gamma` (Fator de Desconto): Determina a importância das recompensas futuras. Um valor próximo de 1 faz o agente pensar mais no longo prazo. (Valor no script: 0.9)
+*   `epsilon` (Taxa de Exploração Inicial): Probabilidade inicial de o agente escolher uma ação aleatória (explorar) em vez da melhor ação conhecida (explotar). (Valor no script: 1.0)
+*   `min_epsilon` (Taxa de Exploração Mínima): O valor mínimo que o epsilon pode atingir, garantindo que o agente sempre explore um pouco. (Valor no script: 0.05)
+*   `decay_rate` (Taxa de Decaimento do Epsilon): Controla a rapidez com que o epsilon diminui a cada episódio, fazendo o agente explorar menos com o tempo. (Valor no script: 0.01)
 
-## 4. Estrutura do Projeto e Código-Fonte
+## Sistema de Recompensas no Taxi-v3
 
-O projeto consiste nos seguintes arquivos principais:
+*   **+20 pontos:** Por entregar o passageiro no destino correto.
+*   **-1 ponto:** Por cada passo/movimento realizado (incentiva a eficiência).
+*   **-10 pontos:** Por tentar pegar um passageiro no local errado ou tentar largar um passageiro no local errado.
 
-- `q_learning_taxi.py`: Contém todo o código Python para a implementação do agente Q-Learning, incluindo:
-    - Inicialização do ambiente Taxi-v3.
-    - Definição dos hiperparâmetros (alpha, gamma, epsilon, etc.).
-    - Inicialização da Q-table.
-    - Função para treinamento do agente (`treinar_agente`).
-    - Função para avaliação do agente treinado (`avaliar_agente`).
-    - Função para visualização dos resultados (`visualizar_resultados`).
-    - Bloco principal (`if __name__ == "__main__":`) que orquestra o treinamento, avaliação e visualização.
-- `README.md` (este arquivo): Documentação completa do projeto.
-- `requirements.txt`: Lista as dependências Python necessárias para executar o projeto.
-- `recompensas_treinamento.png`: Gráfico da média móvel das recompensas por episódio durante o treinamento.
-- `decaimento_epsilon.png`: Gráfico mostrando o decaimento da taxa de exploração (epsilon) durante o treinamento.
-- `recompensas_avaliacao_hist.png`: Histograma da distribuição das recompensas totais por episódio durante a fase de avaliação.
-- `q_table.npy`: Arquivo binário contendo a Q-table aprendida pelo agente após o treinamento.
+A recompensa de -1 por movimento é crucial para que o agente aprenda a encontrar os caminhos mais curtos, em vez de apenas completar a tarefa de qualquer maneira.
 
-**Cabeçalho dos Arquivos:**
-Todos os arquivos de código-fonte incluem um cabeçalho com:
-- Nome do arquivo
-- Data de criação
-- Autor
-- Matrícula
-- Descrição do que o arquivo implementa e suas funcionalidades.
+## Contribuições
 
-## 5. Como Executar o Projeto
+Este projeto foi desenvolvido com foco didático. Sinta-se à vontade para clonar, modificar e experimentar com os parâmetros para aprofundar seu entendimento sobre Q-Learning!
 
-Para executar o projeto, siga os passos abaixo:
+## Autor Original do Desafio da Faculdade
 
-1.  **Clone o repositório (ou baixe os arquivos):**
-    Se o projeto estiver em um repositório Git:
-    `git clone <URL_DO_REPOSITORIO>`
-    `cd <NOME_DA_PASTA_DO_PROJETO>`
-
-    Caso contrário, certifique-se de que todos os arquivos (`q_learning_taxi.py`, `requirements.txt`) estejam no mesmo diretório.
-
-2.  **Crie um ambiente virtual (recomendado):**
-    `python -m venv venv`
-    `source venv/bin/activate` (Linux/macOS)
-    `venv\Scripts\activate` (Windows)
-
-3.  **Instale as dependências:**
-    `pip install -r requirements.txt`
-    (O arquivo `requirements.txt` deve conter `gymnasium`, `numpy`, `matplotlib`)
-
-4.  **Execute o script principal:**
-    `python q_learning_taxi.py`
-
-    O script irá:
-    - Inicializar o ambiente e a Q-table.
-    - Treinar o agente por um número definido de episódios (25.000 no código atual).
-    - Imprimir o progresso do treinamento e a taxa de epsilon.
-    - Avaliar o agente treinado em 100 episódios.
-    - Imprimir as métricas de avaliação (média de passos, penalidades e recompensa por episódio).
-    - Salvar os gráficos de visualização (`recompensas_treinamento.png`, `decaimento_epsilon.png`, `recompensas_avaliacao_hist.png`) e a Q-table (`q_table.npy`) no diretório `/home/ubuntu/project_files/` (ou no diretório especificado na função `visualizar_resultados`).
-
-## 6. Resultados e Análise
-
-Após a execução do script, os seguintes resultados são obtidos e podem ser analisados:
-
-### 6.1. Métricas de Treinamento:
-Durante o treinamento, o script imprime a recompensa média (dos últimos 100 episódios) e o valor atual de epsilon em intervalos regulares. Espera-se que a recompensa média aumente ao longo do tempo, indicando que o agente está aprendendo a política correta.
-
-- **Gráfico de Recompensas do Treinamento (`recompensas_treinamento.png`):**
-  Este gráfico mostra a média móvel das recompensas acumuladas por episódio. Uma curva ascendente que se estabiliza em um valor positivo alto indica um bom aprendizado. No nosso caso, o agente atinge uma recompensa média positiva estável, mostrando que aprendeu a completar a tarefa eficientemente.
-
-- **Gráfico de Decaimento de Epsilon (`decaimento_epsilon.png`):**
-  Este gráfico ilustra como a taxa de exploração (epsilon) diminui exponencialmente ao longo dos episódios de treinamento, começando alta (para exploração) e diminuindo para que o agente explore menos e explore mais o conhecimento adquirido.
-
-### 6.2. Métricas de Avaliação:
-Após o treinamento, o agente é avaliado em um conjunto separado de episódios (100 no código atual) sem exploração (epsilon = 0), utilizando apenas a política aprendida (explotação).
-
-As métricas impressas incluem:
-- **Média de passos por episódio:** Quantos passos, em média, o agente leva para completar a tarefa. Um valor menor é melhor.
-- **Média de penalidades por episódio:** Quantas penalidades, em média, o agente recebe por episódio. Um valor próximo de zero é ideal.
-- **Média de recompensa por episódio:** A recompensa total média que o agente consegue obter. Um valor positivo mais alto indica melhor desempenho.
-
-Nos resultados obtidos:
-- Média de passos por episódio: ~12.99
-- Média de penalidades por episódio: 0.00
-- Média de recompensa por episódio: ~8.01
-
-Estes resultados indicam que o agente aprendeu a resolver o problema de forma eficiente, com pouquíssimas ou nenhuma penalidade e uma recompensa positiva consistente.
-
-- **Histograma de Recompensas da Avaliação (`recompensas_avaliacao_hist.png`):**
-  Mostra a distribuição das recompensas totais obtidas em cada episódio de avaliação. Idealmente, a maioria dos episódios deve ter recompensas altas e consistentes.
-
-### 6.3. Q-Table (`q_table.npy`):
-Este arquivo contém os valores Q aprendidos para cada par estado-ação. Embora difícil de inspecionar diretamente devido ao seu tamanho (500 estados x 6 ações), ela representa o "conhecimento" do agente sobre o ambiente.
-
-## 7. Dificuldades Encontradas e Adaptações
-
-- **Ajuste de Hiperparâmetros:** Encontrar os valores ideais para a taxa de aprendizado (α), fator de desconto (γ), e os parâmetros de decaimento de epsilon (taxa de decaimento, epsilon inicial/mínimo) pode ser um processo iterativo e demorado. Valores inadequados podem levar a um aprendizado lento, instável ou convergência para uma política subótima. Foram testados alguns valores até se chegar a uma configuração que apresentasse bons resultados em um tempo de treinamento razoável.
-- **Número de Episódios de Treinamento:** O agente precisa de um número significativo de episódios para explorar o ambiente e convergir para uma boa política. O número de 25.000 episódios foi escolhido para garantir uma boa convergência para o ambiente Taxi-v3.
-- **Interpretação dos Estados e Ações do Gym:** É crucial entender corretamente como o Gymnasium representa os estados e ações para interagir com o ambiente e atualizar a Q-table corretamente. O estado no Taxi-v3 é um único inteiro que codifica a posição do táxi, a localização do passageiro e o destino.
-
-## 8. Conclusões e Próximos Passos
-
-O projeto demonstrou com sucesso a aplicação do algoritmo Q-Learning para treinar um agente a resolver o problema do Táxi Virtual. O agente foi capaz de aprender uma política eficiente, resultando em um bom desempenho durante a fase de avaliação, com altas recompensas médias e poucas penalidades.
-
-Os gráficos gerados fornecem uma visualização clara do processo de aprendizado e do comportamento do agente, atendendo aos requisitos do desafio.
-
-**Possíveis Próximos Passos (Sugestões):**
-- **Experimentar outros algoritmos:** Comparar o desempenho do Q-Learning com outros algoritmos de Aprendizado por Reforço, como SARSA ou Deep Q-Networks (DQN) para ambientes mais complexos.
-- **Otimização de Hiperparâmetros:** Utilizar técnicas mais sistemáticas para otimizar os hiperparâmetros, como Grid Search ou Bayesian Optimization.
-- **Análise mais profunda da Q-Table:** Desenvolver ferramentas para visualizar ou analisar a Q-table de forma mais intuitiva, talvez focando em estados específicos ou transições.
-- **Generalização para outros ambientes:** Adaptar o agente para resolver outros problemas ou ambientes do Gymnasium.
-
-Este projeto serve como uma excelente introdução prática aos conceitos fundamentais do Aprendizado por Reforço e à implementação do Q-Learning.
+*   Victor Fernando de Sena Linhares (Matrícula: 01645000) || IAs: DeepSekk e Manus
